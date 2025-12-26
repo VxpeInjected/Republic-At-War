@@ -13,16 +13,16 @@
   <meta name="theme-color" content="#041328">
 </head>
 <body>
-  <!-- Star Wars inspired background layers -->
+  <!-- Star Wars inspired background (animated) -->
   <div id="space-backdrop" aria-hidden="true"></div>
 
   <!-- overlay loading (hyperdrive) -->
   <div id="overlay" aria-hidden="true" role="status" aria-live="polite">
     <div class="overlay-bg" aria-hidden="true"></div>
     <div class="overlay-content" id="overlayContent">
-      <div class="hyperdrive">
-        <div class="hyper-core" aria-hidden="true"></div>
-        <div class="hyper-flare" aria-hidden="true"></div>
+      <div class="hyperdrive" aria-hidden="true">
+        <div class="hyper-core"></div>
+        <div class="hyper-flare"></div>
       </div>
       <div class="overlay-text" id="overlayText">Engaging hyperdrive…</div>
     </div>
@@ -39,27 +39,29 @@
 
       <nav class="nav" aria-label="Primary">
         <a class="nav-link" href="#features">Features</a>
-        <a class="nav-link" href="#factions">Factions</a>
         <a class="nav-link" href="#roadmap">Roadmap</a>
-        <a class="nav-link" href="#join">Join</a>
-        <a class="nav-link" data-external data-href="https://VxpeInjected.github.io/Republic-At-War/Documentation" role="link">Documentation</a>
+        <a class="nav-link" href="#news">News</a>
+        <button class="nav-link" id="docs-btn" data-modal="docs" aria-haspopup="dialog">Documentation</button>
         <a class="cta primary" id="play-btn" data-external data-href="https://www.roblox.com/games/PLACEHOLDER" role="button">Play Now</a>
       </nav>
     </div>
   </header>
 
   <main>
+    <!-- Hero: new layout with large centered emblem and split content -->
     <section class="hero" id="home" aria-label="Hero">
       <div class="container hero-inner">
         <div class="hero-left">
           <h1 class="hero-title"><span class="neon">[ALPHA]</span> Republic At War</h1>
-          <p class="hero-sub">RaW — An immersive Star Wars roleplay on Roblox. Command fleets, join factions, and create galactic history.</p>
+          <p class="hero-sub">RaW — A cinematic Star Wars roleplay on Roblox. Join fleets, command warships, and write the next chapter of galactic history.</p>
+
           <div class="hero-ctas">
             <a class="btn primary large" data-external data-href="https://www.roblox.com/games/PLACEHOLDER">Play on Roblox</a>
             <a class="btn ghost large" data-external data-href="https://discord.gg/PLACEHOLDER">Join Discord</a>
             <button class="btn subtle large" id="watch-coming-soon" data-modal="coming-soon">Trailer (Coming Soon)</button>
-            <a class="btn doc large" data-external data-href="https://VxpeInjected.github.io/Republic-At-War/Documentation">Documentation</a>
+            <button class="btn doc large" id="docs-open" data-modal="docs">Documentation</button>
           </div>
+
           <ul class="badges">
             <li>Faction PvP</li>
             <li>Ship Customization</li>
@@ -67,33 +69,56 @@
           </ul>
         </div>
 
-        <div class="hero-right" aria-hidden="true">
-          <div class="ship-card" tabindex="0" aria-label="Ship preview card">
-            <div class="ship-top">
-              <svg class="ship-svg" viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <div class="hero-right">
+          <!-- Emblem card (replaces ship SVG with a cleaner, Star Wars-y emblem) -->
+          <div class="emblem-card" aria-hidden="true" tabindex="0" aria-label="Republic At War emblem">
+            <div class="emblem-inner">
+              <!-- stylized emblem: circular ring + starburst -->
+              <svg class="emblem-svg" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                 <defs>
-                  <linearGradient id="g1" x1="0" x2="1">
-                    <stop offset="0" stop-color="#6ee0ff"/>
-                    <stop offset="1" stop-color="#2a9cff"/>
-                  </linearGradient>
+                  <radialGradient id="emG" cx="50%" cy="35%">
+                    <stop offset="0%" stop-color="#aef0ff"/>
+                    <stop offset="60%" stop-color="#4fbfff"/>
+                    <stop offset="100%" stop-color="#1b6fb4"/>
+                  </radialGradient>
+                  <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+                    <feGaussianBlur stdDeviation="6" result="coloredBlur"/>
+                    <feMerge>
+                      <feMergeNode in="coloredBlur"/>
+                      <feMergeNode in="SourceGraphic"/>
+                    </feMerge>
+                  </filter>
                 </defs>
-                <path d="M10 70 Q70 10 120 70 T190 70 L160 90 L40 90 Z" fill="url(#g1)" opacity="0.98" />
+
+                <circle cx="100" cy="100" r="58" fill="url(#emG)" filter="url(#glow)" opacity="0.95"/>
+                <circle cx="100" cy="100" r="44" fill="#021b2a" opacity="0.18"/>
+                <g fill="#dff7ff" opacity="0.96" transform="translate(100,100)">
+                  <!-- simple starburst -->
+                  <path d="M0 -36 L4 -10 L36 -4 L8 8 L20 36 L0 16 L-20 36 L-8 8 L-36 -4 L-4 -10 Z" transform="rotate(0)"/>
+                </g>
+
+                <!-- subtle ring accent -->
+                <path d="M100 20 a80 80 0 1 1 0 160 a80 80 0 1 1 0 -160" fill="none" stroke="rgba(174,240,255,0.06)" stroke-width="6" />
               </svg>
             </div>
-            <div class="ship-info">
-              <h3>RX-12 Interceptor</h3>
-              <p class="muted">Swift interceptor favored by Republic wing squads.</p>
+
+            <div class="emblem-info">
+              <h3>RaW Command Emblem</h3>
+              <p class="muted">An emblem of command. Tap Play to deploy into the alpha build.</p>
               <div class="card-actions">
                 <button class="chip">Specs</button>
-                <button class="chip">Customize</button>
+                <button class="chip">Cosmetics</button>
                 <button class="chip" data-external data-href="https://www.roblox.com/games/PLACEHOLDER">Deploy</button>
               </div>
             </div>
           </div>
         </div>
       </div>
-      <div class="chevrons" aria-hidden="true">
-        <span></span><span></span><span></span>
+
+      <div class="hero-bottom container">
+        <div class="announcement">
+          <strong>Alpha Access:</strong> Alpha invites are rolling out. Join the Discord to request tester access and event signup.
+        </div>
       </div>
     </section>
 
@@ -103,55 +128,32 @@
         <article class="feature-card">
           <div class="fc-icon">⚔️</div>
           <h3>Faction Warfare</h3>
-          <p>Dynamic territory control: factions fight for systems and strategic assets. Player actions influence the galactic map.</p>
+          <p>Dynamic territory control: factions fight for systems and strategic assets. Player actions alter the galactic map.</p>
         </article>
         <article class="feature-card">
           <div class="fc-icon">🛠️</div>
           <h3>Ship Customization</h3>
-          <p>Swap chassis, weapons, utilities and cosmetics. Build roles: interceptors, bombers, capital-class vessels.</p>
+          <p>Swap chassis, armaments and cosmetics. Create roles: interceptors, bombers, capital ships.</p>
         </article>
         <article class="feature-card">
           <div class="fc-icon">🎭</div>
           <h3>Roleplay</h3>
-          <p>Rank systems, player-run governments, missions and emergent storylines driven by the community.</p>
+          <p>Player-run governments, missions and emergent storylines crafted by the community.</p>
         </article>
         <article class="feature-card">
           <div class="fc-icon">📡</div>
           <h3>Economy & Logistics</h3>
-          <p>Trade, resource extraction and fleet logistics matter — keep your supply lines open or risk losing the front.</p>
+          <p>Trade, resources and fleet logistics — control the supply lines to win prolonged campaigns.</p>
         </article>
-      </div>
-    </section>
-
-    <section class="factions container" id="factions" aria-label="Factions">
-      <h2 class="section-title">Factions</h2>
-      <p class="lead">Choose a side or stand alone. Each faction has unique ships, missions and political goals.</p>
-      <div class="grid faction-grid">
-        <div class="faction-card">
-          <h4>Republic Fleet</h4>
-          <p>Disciplined fleets, balanced tech, strong capital presence.</p>
-        </div>
-        <div class="faction-card">
-          <h4>Separatist Coalition</h4>
-          <p>Mass-produced strike craft, heavy missile doctrine, swarm tactics.</p>
-        </div>
-        <div class="faction-card">
-          <h4>Independent</h4>
-          <p>Privateers, mercs and criminal syndicates that exploit chaos.</p>
-        </div>
-        <div class="faction-card">
-          <h4>Civilians & Envoys</h4>
-          <p>Traders, diplomats and neutral actors shaping politics behind the scenes.</p>
-        </div>
       </div>
     </section>
 
     <section class="roadmap container" id="roadmap" aria-label="Roadmap">
       <h2 class="section-title">Roadmap</h2>
       <ol class="timeline">
-        <li><strong>Alpha Launch</strong> — Core combat, factions, and basic customization.</li>
-        <li><strong>Beta</strong> — Expanded ships, economy, and scripted campaign systems.</li>
-        <li><strong>Full Release</strong> — Player-run governments, persistent galaxy and events.</li>
+        <li><strong>Alpha Launch</strong> — Core combat, factions, and customization.</li>
+        <li><strong>Beta</strong> — More ships, economy, and campaigns.</li>
+        <li><strong>Full Release</strong> — Persistent galaxy, events, and player governments.</li>
       </ol>
     </section>
 
@@ -159,21 +161,20 @@
       <h2 class="section-title">Latest News</h2>
       <article class="news-card">
         <h4>Alpha Access Live</h4>
-        <p>Alpha invites are rolling out to testers. Join Discord for priority access and event signups.</p>
+        <p>Alpha invites are live for testers. Join Discord for priority and events.</p>
       </article>
       <article class="news-card">
         <h4>Ship Skins Teaser</h4>
-        <p>New skin sets will be added next patch — preview coming soon in the hangar.</p>
+        <p>New cosmetic sets coming in the next patch — previews will appear in the hangar.</p>
       </article>
     </section>
 
     <section class="join container" id="join" aria-label="Join">
       <h2 class="section-title">Join the Galaxy</h2>
-      <p class="lead">Ready to jump into hyperspace? Join RaW and be part of ongoing storylines, events, and fleet battles.</p>
+      <p class="lead">Ready to jump into hyperspace? Join RaW and be part of storylines, events, and fleet battles.</p>
       <div class="join-actions">
         <a class="btn primary large" data-external data-href="https://www.roblox.com/games/PLACEHOLDER">Play on Roblox</a>
         <a class="btn ghost large" data-external data-href="https://discord.gg/PLACEHOLDER">Join Discord</a>
-        <a class="btn doc large" data-external data-href="https://VxpeInjected.github.io/Republic-At-War/Documentation">Documentation</a>
       </div>
       <div class="faq">
         <details>
@@ -182,7 +183,7 @@
         </details>
         <details>
           <summary>How can I help with story or events?</summary>
-          <p>Join the Discord and check #roleplay and #events — community writers and organizers post campaigns there.</p>
+          <p>Join Discord and check #roleplay and #events — community writers post campaigns regularly.</p>
         </details>
       </div>
     </section>
@@ -194,19 +195,38 @@
       <div class="socials">
         <a class="social" aria-label="Discord" data-external data-href="https://discord.gg/PLACEHOLDER">Discord</a>
         <a class="social" aria-label="Roblox" data-external data-href="https://www.roblox.com/games/PLACEHOLDER">Roblox</a>
-        <a class="social" data-external data-href="https://VxpeInjected.github.io/Republic-At-War/Documentation">Documentation</a>
       </div>
     </div>
   </footer>
 
   <!-- Coming soon modal -->
-  <div id="modal" class="modal" aria-hidden="true" role="dialog" aria-modal="true">
+  <div id="modal-coming-soon" class="modal" aria-hidden="true" role="dialog" aria-modal="true">
     <div class="modal-inner" role="document">
       <button class="modal-back" aria-label="Back">&larr; Back</button>
       <div class="modal-body coming-soon">
         <h2>Trailer Coming Soon</h2>
         <p>We're preparing a cinematic trailer for RaW. Stay tuned — the galaxy awaits.</p>
         <button class="btn primary" id="modal-close">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Documentation popup modal -->
+  <div id="modal-docs" class="modal" aria-hidden="true" role="dialog" aria-modal="true">
+    <div class="modal-inner" role="document">
+      <button class="modal-back" aria-label="Back docs">&larr; Back</button>
+      <div class="modal-body docs">
+        <h2>Documentation — Preview</h2>
+        <p class="lead">Docs are coming soon. This popup shows a quick preview of what will be included: setup guides, roleplay rules, ship specs, and server-team notes.</p>
+        <ul class="doc-list">
+          <li>Quick start: How to join alpha</li>
+          <li>Roleplay rules & etiquette</li>
+          <li>Ship classes & specs</li>
+          <li>Server admin notes & API</li>
+        </ul>
+        <div class="doc-actions">
+          <button class="btn ghost" id="docs-close">Close</button>
+        </div>
       </div>
     </div>
   </div>
