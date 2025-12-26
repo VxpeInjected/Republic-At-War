@@ -1,8 +1,15 @@
-// Lightweight interactivity for Republic At War preview site (RaW)
+// Interactivity for Republic At War (RaW) preview site
 // - smooth scrolling for internal anchors
-// - in-page slick loading overlay for external links/buttons marked with [data-external]
-// - simple modal trailer handling
+// - in-page hyperdrive overlay for external links/buttons marked with [data-external]
+// - modal "coming soon" screen with back button
 // - year auto-fill
+// - external links open in a new tab (noopener)
+
+/* Utility: safe open in new tab */
+function openInNewTab(url) {
+  if (!url) return;
+  window.open(url, '_blank', 'noopener,noreferrer');
+}
 
 document.addEventListener('DOMContentLoaded', () => {
   // fill year
@@ -24,46 +31,37 @@ document.addEventListener('DOMContentLoaded', () => {
   // overlay control
   const overlay = document.getElementById('overlay');
   const overlayText = document.getElementById('overlayText');
+  const overlayBg = overlay ? overlay.querySelector('.overlay-bg') : null;
 
   function showOverlay(message = 'Engaging hyperdrive…') {
     if (!overlay) return;
     overlay.setAttribute('aria-hidden', 'false');
-    overlayText && (overlayText.textContent = message);
+    overlay.classList.add('hyperdrive-active');
+    if (overlayText) overlayText.textContent = message;
   }
   function hideOverlay() {
     if (!overlay) return;
     overlay.setAttribute('aria-hidden', 'true');
+    overlay.classList.remove('hyperdrive-active');
   }
 
   // click handlers for any element with data-external and data-href
   document.querySelectorAll('[data-external][data-href]').forEach(el => {
     el.addEventListener('click', (e) => {
-      // If element is an anchor and already has href that's external, allow default. We still intercept to show overlay.
       e.preventDefault();
       const href = el.getAttribute('data-href');
-      // Custom label if present
       const label = el.getAttribute('data-label') || '';
+
+      // show hyperdrive overlay with custom or default message
       showOverlay(label ? `${label} — Launching…` : 'Engaging hyperdrive…');
 
-      // small animation duration, then navigate
-      // If link is same origin anchor -> smooth scroll; else navigate window.location
-      const isAnchor = href && href.startsWith('#');
-      const wait = 950; // ms; keeps the overlay slick but quick
+      // quick hyperdrive effect, then open in new tab
+      const wait = 900; // ms; short but noticeable
       setTimeout(() => {
-        if (isAnchor) {
-          const id = href.slice(1);
-          const target = document.getElementById(id);
-          if (target) {
-            target.scrollIntoView({behavior:'smooth', block:'start'});
-            hideOverlay();
-          } else {
-            hideOverlay();
-          }
-        } else {
-          // external — navigate after a short fade
-          // open in same tab to allow Github Pages linking; adjust to open in new tab if desired
-          window.location.href = href;
-        }
+        // open in new tab (per request)
+        openInNewTab(href);
+        // keep overlay for a short extra moment, then hide
+        setTimeout(hideOverlay, 400);
       }, wait);
     });
   });
@@ -76,40 +74,28 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Trailer modal
+  // Coming soon modal handling
   const modal = document.getElementById('modal');
-  const trailerBtn = document.getElementById('watch-trailer');
-  const modalClose = modal ? modal.querySelector('.modal-close') : null;
-  const trailerFrame = document.getElementById('trailerFrame');
+  const trailerBtn = document.getElementById('watch-coming-soon');
+  const modalClose = document.getElementById('modal-close');
+  const modalBack = modal ? modal.querySelector('.modal-back') : null;
 
-  function openModal(trailerUrl = '') {
+  function openModal() {
     if (!modal) return;
-    if (trailerFrame && trailerUrl) {
-      // ensure autoplay disabled unless you want autoplay — many browsers block autoplay
-      trailerFrame.src = trailerUrl;
-    }
     modal.setAttribute('aria-hidden', 'false');
   }
   function closeModal() {
     if (!modal) return;
     modal.setAttribute('aria-hidden', 'true');
-    if (trailerFrame) trailerFrame.src = '';
   }
 
   if (trailerBtn) {
     trailerBtn.addEventListener('click', () => {
-      // Replace the URL below with your YouTube embed URL (recommended).
-      // Example: "https://www.youtube.com/embed/VIDEO_ID?rel=0&autoplay=1"
-      const demoTrailer = ''; // <-- put your embed URL here
-      if (demoTrailer) openModal(demoTrailer);
-      else {
-        // simple feedback: show overlay then hide
-        showOverlay('Preparing trailer…');
-        setTimeout(hideOverlay, 800);
-      }
+      openModal();
     });
   }
   if (modalClose) modalClose.addEventListener('click', closeModal);
+  if (modalBack) modalBack.addEventListener('click', closeModal);
   if (modal) modal.addEventListener('click', (e) => {
     if (e.target === modal) closeModal();
   });
@@ -121,5 +107,4 @@ document.addEventListener('DOMContentLoaded', () => {
       hideOverlay();
     }
   });
-
 });
